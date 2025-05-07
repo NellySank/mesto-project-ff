@@ -1,16 +1,7 @@
 import './index.css';
-import {
-  initialCards,
-  createCard,
-  deleteCard,
-  handlerLikeCard,
-} from './scripts/cards.js';
-import {
-  openModal,
-  closeModal,
-  handlerClickOwerlay,
-  handlerKeydown,
-} from './scripts/modal.js';
+import { createCard, deleteCard, handlerLikeCard } from './scripts/cards.js';
+import { openModal, closeModal } from './scripts/modal.js';
+import { initialCards } from './scripts/initialCards.js';
 
 // DOM узлы
 const listCard = document.querySelector('.places__list');
@@ -24,30 +15,36 @@ const modals = document.querySelectorAll('.popup');
 const profileTitle = document.querySelector('.profile__title');
 const profileDescription = document.querySelector('.profile__description');
 //форма редактирования профиля
-const formEdit = document.querySelector('form[name="edit-profile"]');
+const formEdit = document.forms['edit-profile'];
 const nameInput = formEdit.elements.name;
 const jobInput = formEdit.elements.description;
 //форма добавления места
-const formNewPlace = document.querySelector('form[name="new-place"]');
-const placeNameInput = formNewPlace.querySelector('input[name="place-name"]');
-const linkInput = formNewPlace.querySelector('input[name="link"]');
+const formNewPlace = document.forms['new-place'];
+const placeNameInput = formNewPlace.elements['place-name'];
+const linkInput = formNewPlace.elements.link;
 
+//заполнение формы данными со страницы
+const fillFormEditProfile = () => {
+  nameInput.value = profileTitle.textContent;
+  jobInput.value = profileDescription.textContent;
+};
+
+//заполнение попап-карточки данными из формы
+const fillPopupTypeImage = (cardItem) => {
+  popupImage.src = cardItem.querySelector('.card__image').src;
+  popupImage.alt = cardItem.querySelector('.card__image').alt;
+  popupCaption.textContent = cardItem.querySelector('.card__title').textContent;
+};
+
+//общий обработчик для всех попапов
 const handlerModal = (modalItem, cardItem) => {
   if (modalItem.classList.contains('popup_type_edit')) {
-    nameInput.value = profileTitle.textContent;
-    jobInput.value = profileDescription.textContent;
-  } else if (modalItem.classList.contains('popup_type_new-card')) {
-    placeNameInput.value = '';
-    linkInput.value = '';
+    fillFormEditProfile();
   } else if (modalItem.classList.contains('popup_type_image')) {
-    popupImage.src = cardItem.querySelector('.card__image').src;
-    popupImage.alt = cardItem.querySelector('.card__image').alt;
-    popupCaption.textContent =
-      cardItem.querySelector('.card__title').textContent;
+    fillPopupTypeImage(cardItem);
   }
 
   openModal(modalItem);
-  document.addEventListener('keydown', handlerKeydown);
 };
 
 // функция сохранения значений из формы в профиль
@@ -56,26 +53,32 @@ const handleFormEditProfileSubmit = (evt) => {
   profileTitle.textContent = nameInput.value;
   profileDescription.textContent = jobInput.value;
 
-  const openedPopup = document.querySelector('.popup_is-opened');
-  closeModal(openedPopup);
+  closeModal(popupEdit);
+};
+
+//универсальная функция добавления карточки
+const renderCard = (cardName, cardLink, method = 'prepend') => {
+  const cardElement = createCard(
+    cardName,
+    cardLink,
+    deleteCard,
+    handlerLikeCard,
+    handlerCardView
+  );
+  listCard[method](cardElement);
 };
 
 // функция сохранения карточки
 const handleFormNewPlaceSubmit = (evt) => {
   evt.preventDefault();
 
-  const itemCard = createCard(
-    placeNameInput.value,
-    linkInput.value,
-    deleteCard,
-    handlerLikeCard,
-    handlerCardView
-  );
-  const listCard = document.querySelector('.places__list');
-  listCard.prepend(itemCard);
+  renderCard(placeNameInput.value, linkInput.value, 'prepend');
 
-  const openedPopup = document.querySelector('.popup_is-opened');
-  closeModal(openedPopup);
+  closeModal(popupNewCard);
+
+  //очищаем форму после добавления карточки
+  placeNameInput.value = '';
+  linkInput.value = '';
 };
 
 //обработчик открытия окна для просмотра карточки
@@ -85,16 +88,7 @@ const handlerCardView = (cardItem) => {
 };
 
 // Вывести карточки на страницу
-initialCards.forEach((item) => {
-  const itemCard = createCard(
-    item.name,
-    item.link,
-    deleteCard,
-    handlerLikeCard,
-    handlerCardView
-  );
-  listCard.append(itemCard);
-});
+initialCards.forEach((item) => renderCard(item.name, item.link, 'append'));
 
 // листенер на кнопку редактирования профиля
 buttonEditProfile.addEventListener('click', () => handlerModal(popupEdit));
@@ -107,16 +101,6 @@ formEdit.addEventListener('submit', handleFormEditProfileSubmit);
 
 //листенер на добавление места
 formNewPlace.addEventListener('submit', handleFormNewPlaceSubmit);
-
-//добавление листенеров на все модальные окна для закрытия по кнопке или за пределами
-modals.forEach((modal) => {
-  modal.addEventListener('click', handlerClickOwerlay);
-});
-
-// добавление листенеров на нажатие кнопки ESC
-modals.forEach((modal) => {
-  modal.addEventListener('keydown', handlerKeydown);
-});
 
 //добавим всем модальным окнам класс для плавного открывания
 modals.forEach((modal) => {

@@ -1,55 +1,3 @@
-const imgArkhyz = new URL(
-  'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/arkhyz.jpg',
-  import.meta.url
-);
-const imgChelyabinsk = new URL(
-  'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/chelyabinsk-oblast.jpg',
-  import.meta.url
-);
-const imgIvanovo = new URL(
-  'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/ivanovo.jpg',
-  import.meta.url
-);
-const imgKamchatka = new URL(
-  'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kamchatka.jpg',
-  import.meta.url
-);
-const imgKholmogorsky = new URL(
-  'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kholmogorsky-rayon.jpg',
-  import.meta.url
-);
-const imgBaikal = new URL(
-  'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/baikal.jpg',
-  import.meta.url
-);
-
-export const initialCards = [
-  {
-    name: 'Архыз',
-    link: imgArkhyz,
-  },
-  {
-    name: 'Челябинская область',
-    link: imgChelyabinsk,
-  },
-  {
-    name: 'Иваново',
-    link: imgIvanovo,
-  },
-  {
-    name: 'Камчатка',
-    link: imgKamchatka,
-  },
-  {
-    name: 'Холмогорский район',
-    link: imgKholmogorsky,
-  },
-  {
-    name: 'Байкал',
-    link: imgBaikal,
-  },
-];
-
 // @todo: Темплейт карточки
 const cardTemplate = document.querySelector('#card-template').content;
 
@@ -70,14 +18,14 @@ export const createCard = (
   handlerCardView
 ) => {
   const newCard = cardTemplate.querySelector('.places__item').cloneNode(true);
+  const cardImage = newCard.querySelector('.card__image');
 
   newCard.querySelector('.card__title').textContent = cardName;
-  newCard.querySelector('.card__image').src = cardLink;
-  newCard.querySelector('.card__image').alt = `Фотография места: ${cardName}`;
+  cardImage.src = cardLink;
+  cardImage.alt = `Фотография места: ${cardName}`;
 
   const deleteButton = newCard.querySelector('.card__delete-button');
   const likeButton = newCard.querySelector('.card__like-button');
-  const cardImage = newCard.querySelector('.card__image');
 
   deleteButton.addEventListener('click', () => deleteCard(newCard));
   likeButton.addEventListener('click', () => handlerLikeCard(newCard));
