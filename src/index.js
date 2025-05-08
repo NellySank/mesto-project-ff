@@ -48,9 +48,7 @@ const renderCard = (cardName, cardLink, method = 'prepend') => {
 // функция сохранения карточки
 const handleFormNewPlaceSubmit = (evt) => {
   evt.preventDefault();
-
   renderCard(placeNameInput.value, linkInput.value, 'prepend');
-
   closeModal(popupNewCard);
 
   //очищаем форму после добавления карточки
