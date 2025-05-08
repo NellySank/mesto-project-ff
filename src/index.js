@@ -24,13 +24,6 @@ const formNewPlace = document.forms['new-place'];
 const placeNameInput = formNewPlace.elements['place-name'];
 const linkInput = formNewPlace.elements.link;
 
-//заполнение попап-карточки данными из формы
-const fillPopupTypeImage = (cardName, cardLink) => {
-  popupImage.src = cardLink;
-  popupImage.alt = cardName;
-  popupCaption.textContent = cardName;
-};
-
 // функция сохранения значений из формы в профиль
 const handleFormEditProfileSubmit = (evt) => {
   evt.preventDefault();
@@ -67,7 +60,9 @@ const handleFormNewPlaceSubmit = (evt) => {
 
 //обработчик открытия окна для просмотра карточки
 const handlerCardView = (cardName, cardLink) => {
-  fillPopupTypeImage(cardName, cardLink);
+  popupImage.src = cardLink;
+  popupImage.alt = cardName;
+  popupCaption.textContent = cardName;
   openModal(popupCardView);
 };
 
