@@ -5,8 +5,7 @@ export const deleteCard = (cardItem) => {
   cardItem.remove();
 };
 
-export const handlerLikeCard = (cardItem) => {
-  const likeButton = cardItem.querySelector('.card__like-button');
+export const handlerLikeCard = (likeButton) => {
   likeButton.classList.toggle('card__like-button_is-active');
 };
 
@@ -28,8 +27,10 @@ export const createCard = (
   const likeButton = newCard.querySelector('.card__like-button');
 
   deleteButton.addEventListener('click', () => deleteCard(newCard));
-  likeButton.addEventListener('click', () => handlerLikeCard(newCard));
-  cardImage.addEventListener('click', () => handlerCardView(newCard));
+  likeButton.addEventListener('click', () => handlerLikeCard(likeButton));
+  cardImage.addEventListener('click', () =>
+    handlerCardView(cardName, cardLink)
+  );
 
   return newCard;
 };

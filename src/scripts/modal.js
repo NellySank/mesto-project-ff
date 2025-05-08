@@ -31,5 +31,5 @@ export const openModal = (modalItem) => {
 export const closeModal = (modalItem) => {
   modalItem.classList.remove('popup_is-opened');
   document.removeEventListener('keydown', handlerKeydown);
-  modalItem.removeEventListener('keydown', handlerClickOwerlay);
+  modalItem.removeEventListener('click', handlerClickOwerlay);
 };

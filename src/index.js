@@ -11,6 +11,7 @@ const popupImage = document.querySelector('.popup__image');
 const popupCaption = document.querySelector('.popup__caption');
 const popupEdit = document.querySelector('.popup_type_edit');
 const popupNewCard = document.querySelector('.popup_type_new-card');
+const popupCardView = document.querySelector('.popup_type_image');
 const modals = document.querySelectorAll('.popup');
 const profileTitle = document.querySelector('.profile__title');
 const profileDescription = document.querySelector('.profile__description');
@@ -23,28 +24,11 @@ const formNewPlace = document.forms['new-place'];
 const placeNameInput = formNewPlace.elements['place-name'];
 const linkInput = formNewPlace.elements.link;
 
-//заполнение формы данными со страницы
-const fillFormEditProfile = () => {
-  nameInput.value = profileTitle.textContent;
-  jobInput.value = profileDescription.textContent;
-};
-
 //заполнение попап-карточки данными из формы
-const fillPopupTypeImage = (cardItem) => {
-  popupImage.src = cardItem.querySelector('.card__image').src;
-  popupImage.alt = cardItem.querySelector('.card__image').alt;
-  popupCaption.textContent = cardItem.querySelector('.card__title').textContent;
-};
-
-//общий обработчик для всех попапов
-const handlerModal = (modalItem, cardItem) => {
-  if (modalItem.classList.contains('popup_type_edit')) {
-    fillFormEditProfile();
-  } else if (modalItem.classList.contains('popup_type_image')) {
-    fillPopupTypeImage(cardItem);
-  }
-
-  openModal(modalItem);
+const fillPopupTypeImage = (cardName, cardLink) => {
+  popupImage.src = cardLink;
+  popupImage.alt = cardName;
+  popupCaption.textContent = cardName;
 };
 
 // функция сохранения значений из формы в профиль
@@ -82,19 +66,23 @@ const handleFormNewPlaceSubmit = (evt) => {
 };
 
 //обработчик открытия окна для просмотра карточки
-const handlerCardView = (cardItem) => {
-  const popupCardView = document.querySelector('.popup_type_image');
-  handlerModal(popupCardView, cardItem);
+const handlerCardView = (cardName, cardLink) => {
+  fillPopupTypeImage(cardName, cardLink);
+  openModal(popupCardView);
 };
 
 // Вывести карточки на страницу
 initialCards.forEach((item) => renderCard(item.name, item.link, 'append'));
 
 // листенер на кнопку редактирования профиля
-buttonEditProfile.addEventListener('click', () => handlerModal(popupEdit));
+buttonEditProfile.addEventListener('click', function () {
+  nameInput.value = profileTitle.textContent;
+  jobInput.value = profileDescription.textContent;
+  openModal(popupEdit);
+});
 
 // листенер на кнопку добавления
-buttonAddCard.addEventListener('click', () => handlerModal(popupNewCard));
+buttonAddCard.addEventListener('click', () => openModal(popupNewCard));
 
 // листенер на форму редактирования
 formEdit.addEventListener('submit', handleFormEditProfileSubmit);
