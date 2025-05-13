@@ -1,12 +1,19 @@
 const token = 'f990cb7e-1fb8-428d-9814-583728f45054';
 const groupId = 'wff-cohort-38';
 
+const config = {
+  baseUrl: `https://nomoreparties.co/v1/${groupId}`,
+  headers: {
+    authorization: token,
+    'Content-Type': 'application/json'
+  }
+}
+
 export const fetchCards = () => {
-  return fetch(`https://nomoreparties.co/v1/${groupId}/cards`, {
-    headers: {
-      authorization: token,
-    },
-  }).then((res) => {
+  return fetch(`${config.baseUrl}/cards`, {
+    headers: config.headers,
+  })
+  .then((res) => {
     if (res.ok) {
       return res.json();
     } else {
@@ -16,9 +23,9 @@ export const fetchCards = () => {
 };
 
 export const getUserInfo = () => {
-  return fetch(`https://nomoreparties.co/v1/${groupId}/users/me`, {
+  return fetch(`${config.baseUrl}/users/me`, {
     headers: {
-      authorization: token,
+      authorization: config.headers.authorization,
     },
   }).then((res) => {
     if (res.ok) {
@@ -30,12 +37,9 @@ export const getUserInfo = () => {
 };
 
 export const setUserInfo = (newName, newAbout) => {
-  return fetch(`https://nomoreparties.co/v1/${groupId}/users/me`, {
+  return fetch(`${config.baseUrl}/users/me`, {
     method: 'PATCH',
-    headers: {
-      authorization: token,
-      'Content-Type': 'application/json',
-    },
+    headers: config.headers,
     body: JSON.stringify({
       name: newName,
       about: newAbout,
@@ -50,12 +54,9 @@ export const setUserInfo = (newName, newAbout) => {
 };
 
 export const addNewCard = (cardName, cardLink) => {
-  return fetch(`https://nomoreparties.co/v1/${groupId}/cards`, {
+  return fetch(`${config.baseUrl}/cards`, {
     method: 'POST',
-    headers: {
-      authorization: token,
-      'Content-Type': 'application/json',
-    },
+    headers: config.headers,
     body: JSON.stringify({
       name: cardName,
       link: cardLink,
@@ -70,10 +71,10 @@ export const addNewCard = (cardName, cardLink) => {
 };
 
 export const deleteCard = (cardId) => {
-  return fetch(`https://nomoreparties.co/v1/${groupId}/cards/${cardId}`, {
+  return fetch(`${config.baseUrl}/cards/${cardId}`, {
     method: 'DELETE',
     headers: {
-      authorization: token,
+      authorization: config.headers.authorization,
     },
   }).then((res) => {
     if (res.ok) {
@@ -85,10 +86,10 @@ export const deleteCard = (cardId) => {
 };
 
 export const likeCard = (cardId) => {
-  return fetch(`https://nomoreparties.co/v1/${groupId}/cards/likes/${cardId}`, {
+  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
     method: 'PUT',
     headers: {
-      authorization: token,
+      authorization: config.headers.authorization,
     },
   }).then((res) => {
     if (res.ok) {
@@ -100,10 +101,10 @@ export const likeCard = (cardId) => {
 };
 
 export const dislikeCard = (cardId) => {
-  return fetch(`https://nomoreparties.co/v1/${groupId}/cards/likes/${cardId}`, {
+  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
     method: 'DELETE',
     headers: {
-      authorization: token,
+      authorization: config.headers.authorization,
     },
   }).then((res) => {
     if (res.ok) {
@@ -115,12 +116,9 @@ export const dislikeCard = (cardId) => {
 };
 
 export const updateProfileImage = (imageUrl) => {
-  return fetch(`https://nomoreparties.co/v1/${groupId}/users/me/avatar`, {
+  return fetch(`${config.baseUrl}/users/me/avatar`, {
     method: 'PATCH',
-    headers: {
-      authorization: token,
-      'Content-Type': 'application/json',
-    },
+    headers: config.headers,
     body: JSON.stringify({
       avatar: imageUrl,
     }),

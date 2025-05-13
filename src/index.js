@@ -34,7 +34,6 @@ const linkInput = formNewPlace.elements.link;
 //форма обновления аватара
 const formEditeImageProfile = document.forms['edit-image-profile'];
 const linkImageInput = formEditeImageProfile.elements['edit-image-link'];
-
 const profileImageElement = document.querySelector('.profile__image');
 
 //насттройки валидации
@@ -50,9 +49,21 @@ const validationConfig = {
 let myUserId = '';
 let myAvatar = '';
 
+const renderLoading = (isLoading, formElement) => {
+  const buttonSubmit = formElement.querySelector('.popup__button');
+  if (isLoading) {
+    buttonSubmit.textContent = 'Сохранение...';
+  } else {
+    buttonSubmit.textContent = 'Сохранить';
+  }
+}
+
 // функция сохранения значений из формы в профиль
 const handleFormEditProfileSubmit = (evt) => {
   evt.preventDefault();
+
+  renderLoading(true, formEdit);
+
   //отправим запрос с новыми данными на сервер
   setUserInfo(nameInput.value, jobInput.value)
     .then((resultUserInfo) => {
@@ -61,7 +72,8 @@ const handleFormEditProfileSubmit = (evt) => {
     })
     .catch((err) => {
       console.log(err);
-    });
+    })
+    .finally(() => renderLoading(false, formEdit));
 
   closeModal(popupEdit);
 };
@@ -92,7 +104,11 @@ const renderCard = (
 // функция сохранения карточки
 const handleFormNewPlaceSubmit = (evt) => {
   evt.preventDefault();
-  addNewCard(placeNameInput.value, linkInput.value).then((res) => {
+
+  renderLoading(true, formNewPlace);
+
+  addNewCard(placeNameInput.value, linkInput.value)
+  .then((res) => {
     if (res._id) {
       closeModal(popupNewCard);
       //добавить карточку на страницу
@@ -109,12 +125,16 @@ const handleFormNewPlaceSubmit = (evt) => {
       placeNameInput.value = '';
       linkInput.value = '';
     }
-  });
+  })
+  .catch((err) => console.log(err))
+  .finally(() => renderLoading(false, formNewPlace));
 };
 
 //функция сохранения аватара
 const handleFormEditImageProfile = (evt) => {
   evt.preventDefault();
+
+  renderLoading(true, formEditeImageProfile);
 
   updateProfileImage(linkImageInput.value)
     .then((res) => {
@@ -122,7 +142,8 @@ const handleFormEditImageProfile = (evt) => {
     })
     .catch((err) => {
       console.log(err);
-    });
+    })
+    .finally(() => renderLoading(false, formEditeImageProfile));
 
   closeModal(popupEditImageProfile);
 };
