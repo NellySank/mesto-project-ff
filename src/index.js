@@ -85,6 +85,7 @@ const renderCard = (
   cardLink,
   cardLikeQuantity,
   cardOwnerId,
+  isLikeActive,
   method = 'prepend'
 ) => {
   const buttonDeleteExists = cardOwnerId === myUserId;
@@ -94,6 +95,7 @@ const renderCard = (
     cardName,
     cardLink,
     cardLikeQuantity,
+    isLikeActive,
     buttonDeleteExists,
     handlerLikeCard,
     handlerCardView
@@ -118,6 +120,7 @@ const handleFormNewPlaceSubmit = (evt) => {
         res.link,
         res.likes.length,
         res.owner._id,
+        false,
         'prepend'
       );
 
@@ -174,16 +177,20 @@ Promise.all([getUserInfo(), fetchCards()])
     updateAvatar(myAvatar);
 
     // Обработка карточек
-    resultCards.forEach((item) =>
+    resultCards.forEach((item) => {
+
+      const isLikeActive = item.likes.some(like => like._id === myUserId);
+
       renderCard(
         item._id,
         item.name,
         item.link,
         item.likes.length,
         item.owner._id,
+        isLikeActive,
         'append'
-      )
-    );
+      );
+    });
   })
   .catch((err) => {
     console.log(err);

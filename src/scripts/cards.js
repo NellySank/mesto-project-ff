@@ -44,6 +44,7 @@ export const createCard = (
   cardName,
   cardLink,
   cardLikeQuantity,
+  isLikeActive,
   buttonDeleteExists,
   handlerLikeCard,
   handlerCardView
@@ -52,6 +53,7 @@ export const createCard = (
   const cardImage = newCard.querySelector('.card__image');
   const likeQuantity = newCard.querySelector('.card__like_quantity');
   const deleteButton = newCard.querySelector('.card__delete-button');
+  const likeButton = newCard.querySelector('.card__like-button');
 
   newCard.querySelector('.card__title').textContent = cardName;
   cardImage.src = cardLink;
@@ -67,11 +69,14 @@ export const createCard = (
     deleteButton.classList.add('button_disabled');
   }
 
-  const likeButton = newCard.querySelector('.card__like-button');
+  if (isLikeActive) {
+    likeButton.classList.add('card__like-button_is-active');
+  }
 
   likeButton.addEventListener('click', () =>
     handlerLikeCard(cardId, likeButton, likeQuantity)
   );
+  
   cardImage.addEventListener('click', () =>
     handlerCardView(cardName, cardLink)
   );
