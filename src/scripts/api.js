@@ -5,21 +5,22 @@ const config = {
   baseUrl: `https://nomoreparties.co/v1/${groupId}`,
   headers: {
     authorization: token,
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+  },
+};
+
+const handleResponse = (result, errText) => {
+  if (result.ok) {
+    return result.json();
+  } else {
+    return Promise.reject(`${errText}: ${result.statusText}`);
   }
-}
+};
 
 export const fetchCards = () => {
   return fetch(`${config.baseUrl}/cards`, {
     headers: config.headers,
-  })
-  .then((res) => {
-    if (res.ok) {
-      return res.json();
-    } else {
-      return Promise.reject(`Ошибка загрузки карточек: ${res.statusText}`);
-    }
-  });
+  }).then((res) => handleResponse(res, 'Ошибка загрузки карточек'));
 };
 
 export const getUserInfo = () => {
@@ -27,13 +28,7 @@ export const getUserInfo = () => {
     headers: {
       authorization: config.headers.authorization,
     },
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    } else {
-      return Promise.reject(`Ошибка загрузки профиля: ${res.statusText}`);
-    }
-  });
+  }).then((res) => handleResponse(res, 'Ошибка загрузки профиля'));
 };
 
 export const setUserInfo = (newName, newAbout) => {
@@ -44,13 +39,7 @@ export const setUserInfo = (newName, newAbout) => {
       name: newName,
       about: newAbout,
     }),
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    } else {
-      return Promise.reject(`Ошибка сохранения профиля: ${res.statusText}`);
-    }
-  });
+  }).then((res) => handleResponse(res, 'Ошибка сохранения профиля'));
 };
 
 export const addNewCard = (cardName, cardLink) => {
@@ -61,13 +50,7 @@ export const addNewCard = (cardName, cardLink) => {
       name: cardName,
       link: cardLink,
     }),
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    } else {
-      return Promise.reject(`Ошибка сохранения карточки: ${res.statusText}`);
-    }
-  });
+  }).then((res) => handleResponse(res, 'Ошибка сохранения карточки'));
 };
 
 export const deleteCard = (cardId) => {
@@ -76,13 +59,7 @@ export const deleteCard = (cardId) => {
     headers: {
       authorization: config.headers.authorization,
     },
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    } else {
-      return Promise.reject(`Ошибка удаления карточки: ${res.statusText}`);
-    }
-  });
+  }).then((res) => handleResponse(res, 'Ошибка удаления карточки'));
 };
 
 export const likeCard = (cardId) => {
@@ -91,13 +68,7 @@ export const likeCard = (cardId) => {
     headers: {
       authorization: config.headers.authorization,
     },
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    } else {
-      return Promise.reject(`Ошибка like карточки: ${res.statusText}`);
-    }
-  });
+  }).then((res) => handleResponse(res, 'Ошибка like карточки'));
 };
 
 export const dislikeCard = (cardId) => {
@@ -106,13 +77,7 @@ export const dislikeCard = (cardId) => {
     headers: {
       authorization: config.headers.authorization,
     },
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    } else {
-      return Promise.reject(`Ошибка dislike карточки: ${res.statusText}`);
-    }
-  });
+  }).then((res) => handleResponse(res, 'Ошибка dislike карточки'));
 };
 
 export const updateProfileImage = (imageUrl) => {
@@ -122,13 +87,5 @@ export const updateProfileImage = (imageUrl) => {
     body: JSON.stringify({
       avatar: imageUrl,
     }),
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    } else {
-      return Promise.reject(
-        `Ошибка обновления аватара профиля: ${res.statusText}`
-      );
-    }
-  });
+  }).then((res) => handleResponse(res, 'Ошибка обновления аватара профиля'));
 };

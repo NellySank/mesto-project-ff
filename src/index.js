@@ -1,5 +1,5 @@
 import './index.css';
-import { createCard, deleteCard, handlerLikeCard } from './scripts/cards.js';
+import { createCard, deleteCard, handlerLikeCard } from './scripts/card.js';
 import { openModal, closeModal } from './scripts/modal.js';
 import {
   fetchCards,
@@ -51,12 +51,8 @@ let myAvatar = '';
 
 const renderLoading = (isLoading, formElement) => {
   const buttonSubmit = formElement.querySelector('.popup__button');
-  if (isLoading) {
-    buttonSubmit.textContent = 'Сохранение...';
-  } else {
-    buttonSubmit.textContent = 'Сохранить';
-  }
-}
+  buttonSubmit.textContent = isLoading ? 'Сохранение...' : 'Сохранить';
+};
 
 // функция сохранения значений из формы в профиль
 const handleFormEditProfileSubmit = (evt) => {
@@ -79,24 +75,10 @@ const handleFormEditProfileSubmit = (evt) => {
 };
 
 //универсальная функция добавления карточки
-const renderCard = (
-  cardId,
-  cardName,
-  cardLink,
-  cardLikeQuantity,
-  cardOwnerId,
-  isLikeActive,
-  method = 'prepend'
-) => {
-  const buttonDeleteExists = cardOwnerId === myUserId;
-
+const renderCard = (cardItem, myId, method = 'prepend') => {
   const cardElement = createCard(
-    cardId,
-    cardName,
-    cardLink,
-    cardLikeQuantity,
-    isLikeActive,
-    buttonDeleteExists,
+    cardItem,
+    myId,
     handlerLikeCard,
     handlerCardView
   );
@@ -110,27 +92,19 @@ const handleFormNewPlaceSubmit = (evt) => {
   renderLoading(true, formNewPlace);
 
   addNewCard(placeNameInput.value, linkInput.value)
-  .then((res) => {
-    if (res._id) {
-      closeModal(popupNewCard);
-      //добавить карточку на страницу
-      renderCard(
-        res._id,
-        res.name,
-        res.link,
-        res.likes.length,
-        res.owner._id,
-        false,
-        'prepend'
-      );
+    .then((resultCard) => {
+      if (resultCard._id) {
+        closeModal(popupNewCard);
+        //добавить карточку на страницу
+        renderCard(resultCard, myUserId, 'prepend');
 
-      //очищаем форму после добавления карточки
-      placeNameInput.value = '';
-      linkInput.value = '';
-    }
-  })
-  .catch((err) => console.log(err))
-  .finally(() => renderLoading(false, formNewPlace));
+        //очищаем форму после добавления карточки
+        placeNameInput.value = '';
+        linkInput.value = '';
+      }
+    })
+    .catch((err) => console.log(err))
+    .finally(() => renderLoading(false, formNewPlace));
 };
 
 //функция сохранения аватара
@@ -178,18 +152,7 @@ Promise.all([getUserInfo(), fetchCards()])
 
     // Обработка карточек
     resultCards.forEach((item) => {
-
-      const isLikeActive = item.likes.some(like => like._id === myUserId);
-
-      renderCard(
-        item._id,
-        item.name,
-        item.link,
-        item.likes.length,
-        item.owner._id,
-        isLikeActive,
-        'append'
-      );
+      renderCard(item, myUserId, 'append');
     });
   })
   .catch((err) => {
@@ -211,9 +174,10 @@ buttonAddCard.addEventListener('click', () => {
 });
 
 // листенер на фото аватара
-profileImageElement.addEventListener('click', () =>
-  openModal(popupEditImageProfile)
-);
+profileImageElement.addEventListener('click', () => {
+  clearValidation(formEditeImageProfile, validationConfig);
+  openModal(popupEditImageProfile);
+});
 
 // листенер на форму редактирования
 formEdit.addEventListener('submit', handleFormEditProfileSubmit);

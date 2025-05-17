@@ -29,39 +29,33 @@ const checkInputValidity = (
   inputErrorClass,
   errorClass
 ) => {
-  const messageTooShort =
-    'Минимальное количество символов: 2. Длина текста сейчас: 1 символ.';
   const formName = formElement.getAttribute('name');
 
   if (!inputElement.validity.valid) {
-    let errorMessage = '';
+    let errorMessage = inputElement.validationMessage;
 
     // Общие проверки для обеих форм
     if (inputElement.validity.valueMissing) {
-      errorMessage = 'Вы пропустили это поле';
+      errorMessage = inputElement.validationMessage;
     } else if (inputElement.validity.patternMismatch) {
       errorMessage = inputElement.dataset.errorMessage;
-      // свои проверки для формы Нового места
+      // собственные проверки для формы создания нового места
     } else if (formName === 'new-place' || formName === 'edit-image-profile') {
       if (
         inputElement.validity.typeMismatch &&
         (inputElement.name === 'link' ||
           inputElement.name === 'edit-image-link')
       ) {
-        errorMessage = 'Введите адрес сайта';
+        errorMessage = inputElement.validationMessage;
       } else if (
         inputElement.name === 'place-name' &&
         inputElement.validity.tooShort
       ) {
-        errorMessage = messageTooShort;
-      } else {
-        errorMessage = inputElement.validity.errorMessage;
+        errorMessage = inputElement.validationMessage;
       }
-      // свои проверки для формы Редактирования профиля
+      // собственные проверки для формы Редактирования профиля
     } else if (formName === 'edit-profile' && inputElement.validity.tooShort) {
-      errorMessage = messageTooShort;
-    } else {
-      errorMessage = inputElement.validity.errorMessage;
+      errorMessage = inputElement.validationMessage;
     }
 
     // Показываем ошибку
@@ -114,7 +108,6 @@ export const enableValidation = (validationConfig) => {
 
     const inputList = Array.from(formElement.querySelectorAll(inputSelector));
     const buttonElement = formElement.querySelector(submitButtonSelector);
-    toggleButtonState(inputList, buttonElement, inactiveButtonClass);
 
     inputList.forEach((inputElement) => {
       inputElement.addEventListener('input', function () {
@@ -132,11 +125,16 @@ export const enableValidation = (validationConfig) => {
 
 // очистка ошибок валидации
 export const clearValidation = (formElement, validationConfig) => {
-  const { inputSelector, inputErrorClass, errorClass } = validationConfig;
+  const { inputSelector, inputErrorClass, errorClass, inactiveButtonClass } =
+    validationConfig;
 
   const inputList = Array.from(formElement.querySelectorAll(inputSelector));
 
   inputList.forEach((inputElement) => {
     hideInputError(formElement, inputElement, inputErrorClass, errorClass);
   });
+
+  const submitButton = formElement.querySelector('.popup__button');
+  submitButton.disabled = true;
+  submitButton.classList.add(inactiveButtonClass);
 };
