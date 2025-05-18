@@ -28,8 +28,6 @@ export const handlerLikeCard = (cardId, likeButton, likeQuantity) => {
 const handlerDeleteCard = (cardId, cardItem) => {
   openModal(popupDelete);
 
-  buttonDelete.onclick = null;
-
   buttonDelete.onclick = function () {
     deleteCard(cardId)
       .then((res) => {

@@ -29,34 +29,10 @@ const checkInputValidity = (
   inputErrorClass,
   errorClass
 ) => {
-  const formName = formElement.getAttribute('name');
-
   if (!inputElement.validity.valid) {
-    let errorMessage = inputElement.validationMessage;
-
-    // Общие проверки для обеих форм
-    if (inputElement.validity.valueMissing) {
-      errorMessage = inputElement.validationMessage;
-    } else if (inputElement.validity.patternMismatch) {
-      errorMessage = inputElement.dataset.errorMessage;
-      // собственные проверки для формы создания нового места
-    } else if (formName === 'new-place' || formName === 'edit-image-profile') {
-      if (
-        inputElement.validity.typeMismatch &&
-        (inputElement.name === 'link' ||
-          inputElement.name === 'edit-image-link')
-      ) {
-        errorMessage = inputElement.validationMessage;
-      } else if (
-        inputElement.name === 'place-name' &&
-        inputElement.validity.tooShort
-      ) {
-        errorMessage = inputElement.validationMessage;
-      }
-      // собственные проверки для формы Редактирования профиля
-    } else if (formName === 'edit-profile' && inputElement.validity.tooShort) {
-      errorMessage = inputElement.validationMessage;
-    }
+    const errorMessage = inputElement.validity.patternMismatch
+      ? inputElement.dataset.errorMessage
+      : inputElement.validationMessage;
 
     // Показываем ошибку
     showInputError(
